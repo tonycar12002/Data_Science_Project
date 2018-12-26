@@ -88,83 +88,43 @@ def remove_empty_kwargs(**kwargs):
     return good_kwargs
 
 
-counter = 0 
-for row in youtuber_list.iterrows():
-    # for debug
-    if counter == 1:
-        continue
-    counter += 1
-    
-    youtuber_videos_info = [] # record this youtuber all attributes
-    base_attributes = [] # record youtuber base info wihtout video info
-    index, data = row
-    for i in range(0, len(data.values)):
-        if i != 1:
-            base_attributes.append(data.values[i])
-            
-    # Get the video page of channel
-    url = data.values[1] + "/videos"
-    print ("This youtuber video channel = ", url)
-
-    '''
-    ######################################################################################################
-        Scroll down to the bottom of page to find all vidoes link
-    ######################################################################################################
-    '''
-    driver = webdriver.Chrome("/home/tony/Data_Science_Project/chromedriver")
-    driver.get(url)
-
-    last_height = driver.execute_script("return document.documentElement.scrollHeight")
-
-    while True:
-        # Scroll down to bottom
-        driver.execute_script("window.scrollTo(0, document.documentElement.scrollHeight)")
-
-        # Wait to load page
-        time.sleep(2.0)
-
-        # Calculate new scroll height and compare with last scroll height
-        new_height = driver.execute_script("return document.documentElement.scrollHeight;")
-
-
-        if new_height == last_height:
-            break
-        last_height = new_height
-
-    print("Arrive Bottom")
-
-    page_source = driver.page_source
-    
-    driver.close()
-    
-    # Get all videos links
-    page_soup = BeautifulSoup(page_source, 'html.parser')
-    a_class = page_soup.find_all('a', {"id":"thumbnail"})
-
-    
-    '''
-    ######################################################################################################
-        Find the topic, views, date likes, dislikes, category, comments num, discription in the video
-    ######################################################################################################
-    '''
-    # Get all link url
-    for link in a_class:
-        attributes = base_attributes.copy()
-        video_url = 'https://www.youtube.com'+link.get('href')
-        print (video_url)
-        
-        youtuber_videos_info.append(attributes)
-        
-    '''
-    ######################################################################################################
-        Wrtie the the all_videos.csv file
-    ######################################################################################################
-    '''    
+category_id_to_string = {2:'Autos_and_Vehicles',
+    1:'Film_and_Animation',
+    10:'Music',
+    15:'Pets_and_Animals',
+    17:'Sports',
+    18:'Short_Movies',
+    19:'Travel_and_Events',
+    20:'Gaming',
+    21:'Videoblogging',
+    22:'People_and_Blogs',
+    23:'Comedy',
+    24:'Entertainment',
+    25:'News_and_Politics',
+    26:'Howto_and_Style',
+    27:'Education',
+    28:'Science_and_Technology',
+    29:'Nonprofits_and_Activism',
+    30:'Movies',
+    31:'Anime_and_Animation',
+    32:'Action_and_Adventure',
+    33:'Classics',
+    34:'Comedy',
+    35:'Documentary',
+    36:'Drama',
+    37:'Family',
+    38:'Foreign',
+    39:'Horror',
+    40:'Sci-Fi_and_Fantasy',
+    41:'Thriller',
+    42:'Shorts',
+    43:'Shows',
+    44:'Trailers'
+}
 
 
 
-
-def videos_list_by_id(client, **kwargs):
+def videos_info_by_id(client, today, **kwargs):
     # See full sample for function
     kwargs = remove_empty_kwargs(**kwargs)
 
@@ -172,11 +132,141 @@ def videos_list_by_id(client, **kwargs):
         **kwargs
     ).execute()
     
+    attributes = []
+    
+    title = response['items'][0]['snippet']['title']
+    views = response['items'][0]['statistics']['viewCount']
+    likes = response['items'][0]['statistics']['likeCount']
+    dislikes = response['items'][0]['statistics']['dislikeCount']
+    comments_count = response['items'][0]['statistics']['commentCount']
+    release_date = response['items'][0]['snippet']['publishedAt']
+    release_date = release_date[:10]
+    category_id = int(response['items'][0]['snippet']['categoryId'])
+    category = ""
+    if category_id in category_id_to_string:
+        category = category_id_to_string[category_id]
+        
+    start_date = release_date
+    end_date = today
+    start_sec = time.mktime(time.strptime(start_date,'%Y-%m-%d'))
+    end_sec = time.mktime(time.strptime(end_date,'%Y-%m-%d'))
+    video_exist_day = int((end_sec - start_sec)/(24*60*60))
+    description =  response['items'][0]['snippet']['description']   
+    
+    attributes.append(title)
+    attributes.append(views)
+    attributes.append(release_date)
+    attributes.append(video_exist_day)
+    attributes.append(likes)
+    attributes.append(dislikes)
+    attributes.append(category)
+    attributes.append(comments_count)
+    attributes.append(description)
+    
+    return attributes
+       
+with open('all_videos.csv', 'w+', newline='') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(['User_Name', 'Link', 'Uploads', 'Subscribers', 'Total_Video_Views', 'Country', \
+                        'Channel_Type', 'User_Created_Date', "Today_Date", 'User_Exist_Days', \
+                        'Video_Link', 'Title', 'Views', 'Release_date', 'Video_exist_day', 'Likes', 'Dislikes', \
+                        'Category', 'Comments_count', 'Discription'])
+    
+    counter = 0  
+    for row in youtuber_list.iterrows():
+        # for debug
+        '''
+        if counter == 1:
+            continue
+        counter += 1
+        '''
+        
+        youtuber_videos_info = [] # record this youtuber all attributes
+        base_attributes = [] # record youtuber base info wihtout video info
+        index, data = row
+        for i in range(0, len(data.values)):
+            base_attributes.append(data.values[i])
+        today = data.values[8]
+            
+        # Get the video page of channel
+        url = data.values[1] + "/videos"
+        print ("This youtuber video channel = ", url)
+    
+        '''
+        ######################################################################################################
+            Scroll down to the bottom of page to find all vidoes link
+        ######################################################################################################
+        '''
+        driver = webdriver.Chrome("/home/tony/Data_Science_Project/chromedriver")
+        driver.get(url)
+    
+        last_height = driver.execute_script("return document.documentElement.scrollHeight")
+    
+        while True:
+            # Scroll down to bottom
+            driver.execute_script("window.scrollTo(0, document.documentElement.scrollHeight)")
+    
+            # Wait to load page
+            time.sleep(2.0)
+    
+            # Calculate new scroll height and compare with last scroll height
+            new_height = driver.execute_script("return document.documentElement.scrollHeight;")
+    
+    
+            if new_height == last_height:
+                break
+            last_height = new_height
+    
+        print("Arrive Bottom")
+    
+        page_source = driver.page_source
+        
+        driver.close()
+        
+        # Get all videos links
+        page_soup = BeautifulSoup(page_source, 'html.parser')
+        a_class = page_soup.find_all('a', {"id":"thumbnail"})
+    
+        
+        '''
+        ######################################################################################################
+            Find the 
+            Video_Link, Title, Views, Release_date, Video_exist_day, Likes, Dislikes, 
+            Category, Comments_count, Discription 
+            in the video
+        ######################################################################################################
+        '''
+        # Get all link url
+        for link in a_class:
+            base_attributes_cp = base_attributes.copy()
+            video_id = link.get('href')
+            print ('https://www.youtube.com'+video_id)
+            base_attributes_cp.append('https://www.youtube.com'+video_id)
+            video_id = video_id[9:]
+            #print (video_id)
+            
+            video_attributes = videos_info_by_id(client, today, 
+                          part='snippet,contentDetails,statistics',
+                          id=video_id)
+            
+            youtuber_videos_info.append(base_attributes_cp + video_attributes)
+            #print(base_attributes_cp + video_attributes)
+        '''
+        ######################################################################################################
+            Wrtie the the all_videos.csv file
+        ######################################################################################################
+        '''    
+        print("Write Data")
+        for i in range(len(youtuber_videos_info)):
+            decode = []
+            for info in youtuber_videos_info[i]:
+                if type(info) == str:
+                    decode.append(info.encode(sys.stdin.encoding, "replace").decode(sys.stdin.encoding))
+                else:
+                    decode.append(info)
+            #print(decode)
+            writer.writerow(decode)
+        
+        
+print("Done")
 
-
-    #return print_response(response)
-
-
-videos_list_by_id(client,
-                  part='snippet,contentDetails,statistics',
-                  id='90xQdZ4WmLA')
