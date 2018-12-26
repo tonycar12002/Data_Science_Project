@@ -136,9 +136,20 @@ def videos_info_by_id(client, today, **kwargs):
     
     title = response['items'][0]['snippet']['title']
     views = response['items'][0]['statistics']['viewCount']
-    likes = response['items'][0]['statistics']['likeCount']
-    dislikes = response['items'][0]['statistics']['dislikeCount']
+    
     comments_count = 0
+    likes = 0
+    dislikes = 0
+    try:
+        likes = response['items'][0]['statistics']['likeCount']
+    except:
+        print('No comment') 
+        
+    try:
+        dislikes = response['items'][0]['statistics']['dislikeCount']
+    except:
+        print('No comment')   
+        
     try:
         comments_count = response['items'][0]['statistics']['commentCount']
     except:
