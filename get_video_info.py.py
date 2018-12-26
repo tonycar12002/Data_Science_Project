@@ -138,7 +138,12 @@ def videos_info_by_id(client, today, **kwargs):
     views = response['items'][0]['statistics']['viewCount']
     likes = response['items'][0]['statistics']['likeCount']
     dislikes = response['items'][0]['statistics']['dislikeCount']
-    comments_count = response['items'][0]['statistics']['commentCount']
+    comments_count = 0
+    try:
+        comments_count = response['items'][0]['statistics']['commentCount']
+    except:
+        print('No comment')   
+        
     release_date = response['items'][0]['snippet']['publishedAt']
     release_date = release_date[:10]
     category_id = int(response['items'][0]['snippet']['categoryId'])
@@ -187,6 +192,10 @@ with open('all_videos.csv', 'w+', newline='') as csvfile:
         for i in range(0, len(data.values)):
             base_attributes.append(data.values[i])
         today = data.values[8]
+        
+        uploads = int(data.values[2])
+        if uploads >= 5000:
+            continue 
             
         # Get the video page of channel
         url = data.values[1] + "/videos"
