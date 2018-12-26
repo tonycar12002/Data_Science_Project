@@ -87,17 +87,6 @@ def remove_empty_kwargs(**kwargs):
                 good_kwargs[key] = value
     return good_kwargs
 
-def videos_list_by_id(client, **kwargs):
-    # See full sample for function
-    kwargs = remove_empty_kwargs(**kwargs)
-
-    response = client.videos().list(
-        **kwargs
-    ).execute()
-
-    return print_response(response)
-
-
 
 counter = 0 
 for row in youtuber_list.iterrows():
@@ -173,6 +162,19 @@ for row in youtuber_list.iterrows():
     '''    
 
 
+
+
+def videos_list_by_id(client, **kwargs):
+    # See full sample for function
+    kwargs = remove_empty_kwargs(**kwargs)
+
+    response = client.videos().list(
+        **kwargs
+    ).execute()
+    
+
+
+    #return print_response(response)
 
 
 videos_list_by_id(client,
