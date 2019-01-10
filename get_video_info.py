@@ -16,14 +16,19 @@ import functools
 import csv
 import pandas as pd
 
-youtuber_list = pd.read_csv('youtuber.csv')
+path = "/home/tony/Data_Science_Project/"
+youtuber_list = pd.read_csv(path + 'youtuber.csv')
 #youtuber_list
 
 
 # The CLIENT_SECRETS_FILE variable specifies the name of a file that contains
 # the OAuth 2.0 information for this application, including its client_id and
 # client_secret.
-CLIENT_SECRETS_FILE = "client_secret.json"
+CLIENT_SECRETS_FILE = path + "client_secret.json"
+def get_authenticated_service():
+  flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRETS_FILE, SCOPES)
+  credentials = flow.run_console()
+  return build(API_SERVICE_NAME, API_VERSION, credentials = credentials)
 
 # This OAuth 2.0 access scope allows for full read/write access to the
 # authenticated user's account and requires requests to use an SSL connection.
@@ -188,7 +193,7 @@ def videos_info_by_id(client, today, **kwargs):
     
     return attributes
        
-with open('all_videos.csv', 'w+', newline='') as csvfile:
+with open(path + 'all_videos.csv', 'w+', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(['User_Name', 'Link', 'Uploads', 'Subscribers', 'Total_Video_Views', 'Country', \
                         'Channel_Type', 'User_Created_Date', "Today_Date", 'User_Exist_Days', \
@@ -224,7 +229,7 @@ with open('all_videos.csv', 'w+', newline='') as csvfile:
             Scroll down to the bottom of page to find all vidoes link
         ######################################################################################################
         '''
-        driver = webdriver.Chrome("/home/tony/Data_Science_Project/chromedriver")
+        driver = webdriver.Chrome(path + "chromedriver")
         driver.get(url)
     
         last_height = driver.execute_script("return document.documentElement.scrollHeight")
@@ -296,4 +301,46 @@ with open('all_videos.csv', 'w+', newline='') as csvfile:
         
         
 print("Done")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
