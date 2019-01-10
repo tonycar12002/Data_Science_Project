@@ -1,0 +1,38 @@
+Traceback (most recent call last):
+  File "/home/tony/anaconda3/lib/python3.5/site-packages/spyder/app/mainwindow.py", line 2998, in main
+    mainwindow = run_spyder(app, options, args)
+  File "/home/tony/anaconda3/lib/python3.5/site-packages/spyder/app/mainwindow.py", line 2902, in run_spyder
+    main.setup()
+  File "/home/tony/anaconda3/lib/python3.5/site-packages/spyder/app/mainwindow.py", line 870, in setup
+    from spyder.plugins.externalconsole import ExternalConsole
+  File "/home/tony/anaconda3/lib/python3.5/site-packages/spyder/plugins/externalconsole.py", line 39, in <module>
+    from spyder.widgets.externalshell.pythonshell import ExternalPythonShell
+  File "/home/tony/anaconda3/lib/python3.5/site-packages/spyder/widgets/externalshell/pythonshell.py", line 34, in <module>
+    from spyder.widgets.variableexplorer.namespacebrowser import NamespaceBrowser
+  File "/home/tony/anaconda3/lib/python3.5/site-packages/spyder/widgets/variableexplorer/namespacebrowser.py", line 26, in <module>
+    import ipykernel.pickleutil
+  File "/home/tony/anaconda3/lib/python3.5/site-packages/ipykernel/__init__.py", line 2, in <module>
+    from .connect import *
+  File "/home/tony/anaconda3/lib/python3.5/site-packages/ipykernel/connect.py", line 18, in <module>
+    import jupyter_client
+  File "/home/tony/anaconda3/lib/python3.5/site-packages/jupyter_client/__init__.py", line 7, in <module>
+    from .manager import KernelManager, run_kernel
+  File "/home/tony/anaconda3/lib/python3.5/site-packages/jupyter_client/manager.py", line 32, in <module>
+    from .session import Session
+  File "/home/tony/anaconda3/lib/python3.5/site-packages/jupyter_client/session.py", line 53, in <module>
+    from jupyter_client.jsonutil import extract_dates, squash_dates, date_default
+  File "/home/tony/anaconda3/lib/python3.5/site-packages/jupyter_client/jsonutil.py", line 24, in <module>
+    datetime.strptime("1", "%d")
+  File "/home/tony/anaconda3/lib/python3.5/_strptime.py", line 277, in <module>
+    _TimeRE_cache = TimeRE()
+  File "/home/tony/anaconda3/lib/python3.5/_strptime.py", line 194, in __init__
+    self.locale_time = LocaleTime()
+  File "/home/tony/anaconda3/lib/python3.5/_strptime.py", line 72, in __init__
+    self.lang = _getlang()
+  File "/home/tony/anaconda3/lib/python3.5/_strptime.py", line 31, in _getlang
+    return locale.getlocale(locale.LC_TIME)
+  File "/home/tony/anaconda3/lib/python3.5/locale.py", line 577, in getlocale
+    return _parse_localename(localename)
+  File "/home/tony/anaconda3/lib/python3.5/locale.py", line 486, in _parse_localename
+    raise ValueError('unknown locale: %s' % localename)
+ValueError: unknown locale: lzh_TW
