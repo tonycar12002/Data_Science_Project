@@ -5,15 +5,18 @@ import csv
 import time
 from google.cloud import translate
 translate_client = translate.Client()
-trans_file = open('all_videos_trans.csv', 'a')
+
 writer = csv.writer(trans_file)
 
 
 now = 0 
 
+
+
+
 target = 'en'
 source='zh-tw'
-
+trans_file = open('all_videos_trans.csv', 'a')
 with open("all_videos.csv", newline="") as file:
     csvCursor = list(csv.reader(file))
   
@@ -21,7 +24,7 @@ with open("all_videos.csv", newline="") as file:
         writer.writerow(csvCursor[0])
         now += 1
         
-    for i in range(now, now+2000): #len(csvCursor)
+    for i in range(now+1, now+2001): #len(csvCursor)
         now = i
         row = csvCursor[i]
         
