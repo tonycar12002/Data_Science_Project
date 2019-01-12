@@ -5,3 +5,7 @@
 *.json
 *log
 *.csv#
+*.txt
+*.model
+*.ttf
+*.bin
