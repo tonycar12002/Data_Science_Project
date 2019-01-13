@@ -24,7 +24,8 @@ data = pd.read_csv("all_videos.csv")
 df1 = data['Title']
 df2 = data['Category']
 df3 = data['Views']
-df = pd.concat([df1, df2, df3], axis=1, join_axes=[df1.index])
+df4 = data['Video_exist_day'] + 13
+df = pd.concat([df1, df2, df3, df4], axis=1, join_axes=[df1.index])
 
 # Sentence segmentation
 jieba.load_userdict('/home/tony/Data_Science_Project/Final/user_dict.txt')
@@ -81,6 +82,7 @@ class Application(tk.Frame):
         global category_mapping, df
         self.pack()
         self.th = 1
+        self.day_th = 90
         self.grid(column=0,row=0)
         self.create_widgets()
 
@@ -107,6 +109,17 @@ class Application(tk.Frame):
         self.entry_th.insert(tk.END, 5)
         self.entry_th.grid(row=row,column=1, pady = 8)
         row += 1
+        
+        # Recent Days
+        self.label_day = tk.Label(self, text="Days Threshold",relief = tk.RAISED, width=18)
+        self.label_day["font"] = ("", 13)
+        self.label_day.grid(row=row,column=0, padx = 5)
+
+        self.entry_day = tk.Entry(self, fg="black", width="20")
+        self.entry_day["font"] = ("", 15)
+        self.entry_day.insert(tk.END, 90)
+        self.entry_day.grid(row=row,column=1, pady = 8)
+        row += 1       
     
         # ListBox
         self.label_category = tk.Label(self, text="Video Category",relief = tk.RAISED, width=18)
@@ -141,10 +154,16 @@ class Application(tk.Frame):
             self.th = int(self.entry_th.get())
         else:
             self.th = 5
+            
+        if self.entry_day.get().isdigit():
+            self.day_th = int(self.entry_day.get())
+        else:
+            self.day_th = 90
         
         print("Keyword = ", keyword)
         print("Select = ", category)
-        print("Threshold = ", str(self.th))
+        print("Frequency Threshold = ", str(self.th))
+        print("DayThreshold = ", str(self.day_th))
         
         keyword = HanziConv.toSimplified(keyword)
     
@@ -164,6 +183,7 @@ class Application(tk.Frame):
     
     def filter_category(self, category):
         tmp = df.loc[df['Category'] == category]
+        tmp = tmp.loc[df['Video_exist_day'] <= self.day_th]
         df1 = tmp['Title']
         df2 = tmp['Views']
         tmp = pd.concat([df1, df2], axis=1, join_axes=[df1.index])      
