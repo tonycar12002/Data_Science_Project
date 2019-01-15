@@ -4,6 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import matplotlib
+matplotlib.rc('xtick', labelsize=20) 
+matplotlib.rc('ytick', labelsize=20) 
 import csv
 import re
 import jieba
@@ -20,11 +22,11 @@ print("Initailize")
 plt.rcParams['font.family'] = 'sans-serif'
 plt.rcParams['font.sans-serif']=['simhei']
 
-data = pd.read_csv("all_videos.csv")
+data = pd.read_csv("final_videos.csv")
 df1 = data['Title']
 df2 = data['Category']
 df3 = data['Views']
-df4 = data['Video_exist_day'] + 13
+df4 = data['Video_exist_day'] + 17
 df = pd.concat([df1, df2, df3, df4], axis=1, join_axes=[df1.index])
 
 # Sentence segmentation
@@ -90,7 +92,7 @@ class Application(tk.Frame):
         
         row = 0
         # Input Keyword
-        self.label_keyword = tk.Label(self, text="Target Keyword",relief = tk.RAISED, width=18)
+        self.label_keyword = tk.Label(self, text="Keyword",relief = tk.RAISED, width=18)
         self.label_keyword["font"] = ("", 13)
         self.label_keyword.grid(row=row,column=0, padx = 5)
 
@@ -100,7 +102,7 @@ class Application(tk.Frame):
         row += 1
         
         # Frequency Threshold
-        self.label_th = tk.Label(self, text="Frequency Threshold",relief = tk.RAISED, width=18)
+        self.label_th = tk.Label(self, text="Freq Threshold",relief = tk.RAISED, width=18)
         self.label_th["font"] = ("", 13)
         self.label_th.grid(row=row,column=0, padx = 5)
 
@@ -111,7 +113,7 @@ class Application(tk.Frame):
         row += 1
         
         # Recent Days
-        self.label_day = tk.Label(self, text="Days Threshold",relief = tk.RAISED, width=18)
+        self.label_day = tk.Label(self, text="Days to search",relief = tk.RAISED, width=18)
         self.label_day["font"] = ("", 13)
         self.label_day.grid(row=row,column=0, padx = 5)
 
@@ -247,12 +249,14 @@ class Application(tk.Frame):
         
         plt.figure(figsize=(30, 8),)
         plt.bar(x, y)
+        plt.xlabel("Words", fontsize=40)
+        plt.ylabel("Average viewers", fontsize=40)
         plt.grid()
         plt.show()
         
                 
 root = tk.Tk()
-root.title("Youtube video view count prediction")
+root.title("Youtube Title Keypoint Recommender")
 root.geometry("500x500")
 root.resizable(0, 0)
 app = Application(master=root)

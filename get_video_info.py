@@ -203,11 +203,11 @@ with open(path + 'all_videos.csv', 'w+', newline='') as csvfile:
     counter = 0  
     for row in youtuber_list.iterrows():
         # for debug
-        '''
-        if counter == 1:
-            continue
         counter += 1
-        '''
+        if counter >=101:
+            continue
+        
+        
         
         youtuber_videos_info = [] # record this youtuber all attributes
         base_attributes = [] # record youtuber base info wihtout video info
@@ -217,7 +217,7 @@ with open(path + 'all_videos.csv', 'w+', newline='') as csvfile:
         today = data.values[8]
         
         uploads = int(data.values[2])
-        if uploads >= 10000:
+        if uploads <= 6000 or uploads >=10000:
             continue 
             
         # Get the video page of channel
